@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('users') // 데이터베이스 테이블 이름
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column({ length: 50 })
@@ -55,7 +55,7 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: ['Admin', 'User', 'Guest'], // 실제 역할 값으로 대체해야 합니다.
+    enum: ['Admin', 'User', 'Guest'],
     default: 'User',
   })
   u_role: string;
