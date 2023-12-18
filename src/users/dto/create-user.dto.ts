@@ -3,8 +3,8 @@ import {
   IsOptional,
   IsEmail,
   Length,
-  IsEnum,
   IsNumber,
+  IsIn,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -64,9 +64,9 @@ export class CreateUserDto {
   @IsOptional()
   u_point?: number;
 
-  @IsEnum(['Admin', 'User', 'Guest'])
+  @IsIn(['Admin', 'User', 'Guest'])
   u_role: string;
 
-  @IsEnum(['Y', 'N'])
+  @IsIn(['Y', 'N'])
   u_signout: string;
 }
