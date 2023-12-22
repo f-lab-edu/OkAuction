@@ -68,6 +68,6 @@ export class User {
   })
   u_signout: string;
 
-  @OneToMany(() => Product, (product) => product.user, { cascade: true })
+  @OneToMany(() => Product, (product) => product.user)
   products: Product[];
 }

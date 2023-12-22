@@ -5,10 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
-import { Category } from '../category/category.entity';
 
 @Entity()
 export class Product {
@@ -82,15 +80,6 @@ export class Product {
   @Column({ length: 100, nullable: true })
   main_img_id: string;
 
-  @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, (user) => user.products)
   user: User;
-
-  @ManyToOne(() => Category, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'c_id' })
-  category: Category;
-
-  @ManyToOne(() => Category, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'c_id2' })
-  subCategory: Category;
 }
