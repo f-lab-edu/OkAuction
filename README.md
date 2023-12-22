@@ -1,73 +1,48 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 프로젝트명
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### **OkAuction**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+본 프로젝트는 Nest.js, MySQL 및 TypeORM을 사용하여 구축된 백엔드 애플리케이션입니다. 이 애플리케이션은 프로젝트의 효율성과 유지보수를 중심으로 설계되었습니다.
 
-## Description
+## 기술 스택
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+![NestJS](https://img.shields.io/badge/NestJS-e0234e?style=for-the-badge&logo=nestjs&logoColor=white) ![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white) ![TypeORM](https://img.shields.io/badge/TypeORM-007ACC?style=for-the-badge&logo=typeorm&logoColor=white)
 
-## Installation
+## 코딩 컨벤션
 
-```bash
-$ npm install
+프로젝트의 코딩 컨벤션은 데이터 모델의 명확성과 일관성을 강조합니다. 엔티티 명명 규칙은 다음과 같습니다:
+
+> 엔티티의 첫 알파벳\_컬럼명
+
+이러한 코딩 컨벤션의 채택은 다음과 같은 장점을 제공합니다:
+
+명확성: 접두사(c*, p* 등)를 사용함으로써, 필드가 어떤 엔티티에 속하는지 쉽게 식별할 수 있습니다.
+일관성: 프로젝트 전반에 걸쳐 일관된 명명 규칙을 적용함으로써, 개발자가 코드를 더 빠르게 이해하고 효율적으로 작업할 수 있습니다.
+유지보수 용이성: 명확하고 일관된 명명 규칙은 향후 코드 변경, 업데이트 및 디버깅을 용이하게 합니다.
+
+### 폴더 구조
+
+프로젝트의 폴더 구조는 도메인 중심적으로 구성되어 있습니다. 각 도메인(예: user, product)은 관련된 엔티티, 서비스, 컨트롤러를 하나의 폴더 내에서 관리합니다. 이러한 구조는 다음과 같은 형태로 구성됩니다:
+
+```
+src/
+|-- user/
+| |-- user.entity.ts
+| |-- user.service.ts
+| |-- user.controller.ts
+|-- product/
+| |-- product.entity.ts
+| |-- product.service.ts
+| |-- product.controller.ts
+|-- ... (기타 도메인)
 ```
 
-## Running the app
+도메인별 폴더 구조의 장점
 
-```bash
-# development
-$ npm run start
+모듈성: 각 도메인은 자체적인 모듈로서 기능하며, 관련된 모든 파일이 동일한 폴더 내에 있습니다. 이는 모듈 간의 응집도를 높이고, 결합도를 낮추는 데 도움이 됩니다.
 
-# watch mode
-$ npm run start:dev
+유지보수 용이성: 관련된 파일들이 함께 위치함으로써, 도메인에 대한 변경사항이나 확장이 필요할 때 해당 도메인의 폴더만을 수정하면 됩니다. 이는 유지보수를 간편하게 만듭니다.
 
-# production mode
-$ npm run start:prod
-```
+프로젝트의 가독성 향상: 새로운 개발자가 프로젝트에 참여할 때, 각 도메인과 관련된 모든 요소를 한 곳에서 찾을 수 있어 빠르게 이해하고 작업에 참여할 수 있습니다.
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+확장성: 새로운 기능이나 도메인을 추가하는 경우, 기존 구조에 쉽게 통합할 수 있으며, 각 도메인을 독립적으로 관리하고 확장할 수 있습니다.
