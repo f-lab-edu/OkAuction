@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsDate, IsIn } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProductDto {
   @IsNumber()
@@ -23,6 +24,7 @@ export class CreateProductDto {
   p_direct: number;
 
   @IsDate()
+  @Type(() => Date)
   p_dur: Date;
 
   @IsNumber()
@@ -51,9 +53,11 @@ export class CreateProductDto {
   p_like: number;
 
   @IsDate()
+  @Type(() => Date)
   start_time: Date;
 
   @IsDate()
+  @Type(() => Date)
   end_time: Date;
 
   @IsNumber()
