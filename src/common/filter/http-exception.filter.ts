@@ -27,8 +27,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     console.log('======================');
 
     res.status(status).json({
+      timestamp: new Date().toISOString(),
       statusCode: status,
-      message,
+      path: req.url,
+      error: message,
     });
   }
 }
