@@ -11,7 +11,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './category.entity';
 import { CategoriesService } from './categories.service';
 
-@Controller('users')
+@Controller('categories')
 export class CategoriesController {
   constructor(private readonly usersService: CategoriesService) {}
 
@@ -31,7 +31,7 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.usersService.remove(id);
   }
 }

@@ -31,7 +31,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.usersService.remove(id);
   }
 }
