@@ -4,8 +4,10 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
 import { Product } from './products/product.entity';
 import { ProductsModule } from './products/products.module';
-import { Category } from './category/category.entity';
-import { CategoriesModule } from './category/categories.module';
+import { Category } from './categories/category.entity';
+import { CategoriesModule } from './categories/categories.module';
+import { Bid } from './bids/bid.entity';
+import { BidsModule } from './bids/bids.module';
 
 @Module({
   imports: [
@@ -16,13 +18,14 @@ import { CategoriesModule } from './category/categories.module';
       username: 'root',
       password: '1234',
       database: 'ok-auction',
-      entities: [User, Product, Category],
+      entities: [User, Product, Category, Bid],
       synchronize: true,
       logging: true,
     }),
     UsersModule,
     ProductsModule,
     CategoriesModule,
+    BidsModule,
   ],
 })
 export class AppModule {}
