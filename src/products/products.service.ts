@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -38,15 +34,15 @@ export class ProductsService {
     updateProductDto,
   }: IProductsServiceUpdate): Promise<Product> {
     const product = await this.productsRepository.findOneBy({ id });
-    if (!product) {
-      throw new NotFoundException('해당 제품이 존재하지 않습니다.');
-    }
-    if (product.p_sales_status === 'Sold') {
-      throw new UnprocessableEntityException('이미 판매된 제품입니다.');
-    }
-    if (product.p_sales_status === 'Pending') {
-      throw new UnprocessableEntityException('이미 판매중인 제품입니다.');
-    }
+    // if (!product) {
+    //   throw new NotFoundException('해당 제품이 존재하지 않습니다.');
+    // }
+    // if (product.p_sales_status === 'Sold') {
+    //   throw new UnprocessableEntityException('이미 판매된 제품입니다.');
+    // }
+    // if (product.p_sales_status === 'Pending') {
+    //   throw new UnprocessableEntityException('이미 판매중인 제품입니다.');
+    // }
     const updatedProduct = Object.assign(product, updateProductDto);
     return this.productsRepository.save(updatedProduct);
   }
