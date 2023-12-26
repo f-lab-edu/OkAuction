@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsNumber, IsDate, IsIn } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdateProductDto {
   @IsNumber()
@@ -27,6 +28,7 @@ export class UpdateProductDto {
 
   @IsDate()
   @IsOptional()
+  @Type(() => Date)
   p_dur?: Date;
 
   @IsNumber()
@@ -63,10 +65,12 @@ export class UpdateProductDto {
 
   @IsDate()
   @IsOptional()
+  @Type(() => Date)
   start_time?: Date;
 
   @IsDate()
   @IsOptional()
+  @Type(() => Date)
   end_time?: Date;
 
   @IsNumber()
