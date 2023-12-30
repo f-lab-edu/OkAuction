@@ -33,7 +33,11 @@ export class BidsService {
       throw new BidNotAllowedException();
     }
 
-    if (createBidDto.amount < product.p_b_price) {
+    const minBidAmount = product.highest_bid
+      ? product.highest_bid * 1.05
+      : product.p_b_price;
+
+    if (createBidDto.amount < minBidAmount) {
       throw new InvalidBidException();
     }
 
@@ -78,5 +82,10 @@ export class BidsService {
 
   async getBidsByUser(userId: number): Promise<Bid[]> {
     return this.bidsRepository.find({ where: { user_id: userId } });
+  }
+
+  private isProductAvailableForBidding(product: Product): boolean {
+    const currentTime = new Date();
+    return currentTime > product.start_time && currentTime < product.end_time;
   }
 }
