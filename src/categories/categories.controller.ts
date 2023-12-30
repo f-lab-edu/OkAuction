@@ -13,25 +13,25 @@ import { CategoriesService } from './categories.service';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly usersService: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateCategoryDto): Promise<Category> {
-    return this.usersService.create(createUserDto);
+  create(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
+    return this.categoriesService.create(createCategoryDto);
   }
 
   @Get()
   findAll(): Promise<Category[]> {
-    return this.usersService.findAll();
+    return this.categoriesService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Category> {
-    return this.usersService.findOne(id);
+    return this.categoriesService.findOne(id);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.usersService.remove(id);
+    return this.categoriesService.remove(id);
   }
 }

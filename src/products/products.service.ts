@@ -7,11 +7,13 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductNotFoundException } from './exceptions/product-not-found.exception';
 import { ProductAlreadySoldException } from './exceptions/product-already-sold.exception';
 import { InvalidProductStateException } from './exceptions/invalid-product-state.exception';
-import { Category } from 'src/category/category.entity';
-import { CategoryNotFoundException } from 'src/category/exceptions/category-not-found.exception';
+import { Category } from 'src/categories/category.entity';
+import { CategoryNotFoundException } from 'src/categories/exceptions/category-not-found.exception';
 import { InvalidCategoryException } from './exceptions/invalid-cagetgory.exception';
 import { User } from 'src/users/user.entity';
 import { UserNotFoundException } from 'src/users/exceptions/user-not-found.exception';
+import { Bid } from 'src/bids/bid.entity';
+import { ProductDeletionException } from './exceptions/product-deletion.exception';
 
 @Injectable()
 export class ProductsService {
@@ -22,6 +24,8 @@ export class ProductsService {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Bid)
+    private readonly bidRepository: Repository<Bid>,
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
@@ -66,13 +70,22 @@ export class ProductsService {
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.productsRepository.delete(id);
-    if (result.affected === 0) {
+    // 먼저 해당 Product에 연결된 Bids가 있는지 확인
+    const relatedBids = await this.bidRepository.find({
+      where: { products_id: id },
+    });
+    if (relatedBids.length > 0) {
+      throw new ProductDeletionException(id);
+    }
+    const product = await this.productsRepository.findOneBy({ id });
+    if (!product) {
       throw new ProductNotFoundException(id);
     }
+
+    await this.productsRepository.delete(id);
   }
 
-  //업테이트는 본인만 할 수 있도록
+  //업테이트는 본인만 할 수 있도록 나중에 수정
   async update({
     id,
     updateProductDto,
