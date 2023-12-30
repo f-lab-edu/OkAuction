@@ -8,11 +8,7 @@ export class CreateBidDto {
   products_id: number;
 
   @IsNumber()
-  @IsOptional()
-  amount?: number;
-
-  @IsNumber()
-  start_price: number;
+  amount: number;
 
   @IsDate()
   @IsOptional()

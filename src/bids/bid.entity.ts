@@ -13,11 +13,8 @@ export class Bid {
   @Column('bigint')
   products_id: number;
 
-  @Column('bigint', { nullable: true })
-  amount: number;
-
   @Column('bigint')
-  start_price: number;
+  amount: number;
 
   @Column('timestamp', { nullable: true })
   bids_at: Date;

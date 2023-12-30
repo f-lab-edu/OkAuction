@@ -77,7 +77,7 @@ export class BidsService {
   }
 
   async getBidsByProduct(productId: number): Promise<Bid[]> {
-    return this.bidsRepository.find({ where: { id: productId } });
+    return this.bidsRepository.find({ where: { products_id: productId } });
   }
 
   async getBidsByUser(userId: number): Promise<Bid[]> {
