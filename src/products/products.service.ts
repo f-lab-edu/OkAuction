@@ -124,6 +124,10 @@ export class ProductsService {
     const updatedProduct = Object.assign(product, updateProductDto);
     return this.productsRepository.save(updatedProduct);
   }
+
+  async updateProductStatus(id: number): Promise<void> {
+    await this.productsRepository.save({ id, p_sales_status: 'Sold' });
+  }
 }
 
 interface IProductsServiceUpdate {

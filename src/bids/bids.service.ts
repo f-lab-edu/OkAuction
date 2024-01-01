@@ -28,15 +28,16 @@ export class BidsService {
       throw new ProductNotFoundException(product.id);
     }
 
+    // 경매가 진행중인지 확인
     const currentTime = new Date();
     if (currentTime < product.start_time || currentTime > product.end_time) {
       throw new BidNotAllowedException();
     }
 
+    // 최소 입찰가보다 높은지 확인
     const minBidAmount = product.highest_bid
       ? product.highest_bid * 1.05
       : product.p_b_price;
-
     if (createBidDto.amount < minBidAmount) {
       throw new InvalidBidException();
     }
