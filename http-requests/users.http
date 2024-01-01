@@ -1,0 +1,42 @@
+@host = http://localhost:3000
+@contentType = application/json
+
+###
+# 사용자 목록 조회
+GET {{host}}/users
+
+###
+# 사용자 상세 조회
+GET {{host}}/users/1
+
+###
+# 새 사용자 추가
+POST {{host}}/users
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "u_id": "사용자ID",
+  "u_password": "비밀번호호호",
+  "u_name": "사용자 이름",
+  "u_jumin": "주민번호",
+  "u_addr_postcode": 12345,
+  "u_address": "주소",
+  "u_nickname": "닉네임",
+  "u_role": "User",
+  "u_signout": "N"
+}
+
+###
+# 사용자 정보 업데이트
+PUT {{host}}/users/1
+Content-Type: {{contentType}}
+
+{
+  "username": "updateduser",
+  "email": "updateduser@example.com"
+}
+
+###
+# 사용자 삭제
+DELETE {{host}}/users/1
