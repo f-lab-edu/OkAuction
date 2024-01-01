@@ -8,6 +8,8 @@ import { Category } from './categories/category.entity';
 import { CategoriesModule } from './categories/categories.module';
 import { Bid } from './bids/bid.entity';
 import { BidsModule } from './bids/bids.module';
+import { Order } from './orders/order.entity';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { BidsModule } from './bids/bids.module';
       username: 'root',
       password: '1234',
       database: 'ok-auction',
-      entities: [User, Product, Category, Bid],
+      entities: [User, Product, Category, Bid, Order],
       synchronize: true,
       logging: true,
     }),
@@ -26,6 +28,7 @@ import { BidsModule } from './bids/bids.module';
     ProductsModule,
     CategoriesModule,
     BidsModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}

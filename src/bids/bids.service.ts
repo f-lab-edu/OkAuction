@@ -55,7 +55,11 @@ export class BidsService {
   }
 
   findOne(id: number): Promise<Bid> {
-    return this.bidsRepository.findOneBy({ id: id });
+    const bid = this.bidsRepository.findOneBy({ id: id });
+    if (!bid) {
+      throw new BidNotFoundException(id);
+    }
+    return bid;
   }
 
   async remove({
