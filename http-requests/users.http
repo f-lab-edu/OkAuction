@@ -33,8 +33,7 @@ PUT {{host}}/users/1
 Content-Type: {{contentType}}
 
 {
-  "username": "updateduser",
-  "email": "updateduser@example.com"
+  "u_email": "updated email"
 }
 
 ###

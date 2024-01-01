@@ -37,7 +37,7 @@ export class ProductsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
-  ) {
+  ): Promise<Product> {
     return this.productsService.update({ id, updateProductDto });
   }
 

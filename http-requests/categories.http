@@ -37,7 +37,6 @@ PUT {{host}}/categories/1
 Content-Type: {{contentType}}
 
 {
-  "c_id2": null,
   "c_name": "전자제품"
 }
 

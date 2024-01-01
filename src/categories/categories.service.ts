@@ -6,6 +6,8 @@ import { Category } from './category.entity';
 import { CategoryAlreadyExistsException } from './exceptions/category-alread-exists.exception';
 import { Product } from 'src/products/product.entity';
 import { CategoryDeletionException } from './exceptions/category-deletion.exception';
+import { CategoryNotFoundException } from './exceptions/category-not-found.exception';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -33,7 +35,11 @@ export class CategoriesService {
   }
 
   findOne(c_id: number): Promise<Category> {
-    return this.categoriesRepository.findOneBy({ c_id: c_id });
+    const category = this.categoriesRepository.findOneBy({ c_id: c_id });
+    if (!category) {
+      throw new CategoryNotFoundException(c_id);
+    }
+    return category;
   }
 
   async remove(id: number): Promise<void> {
@@ -55,5 +61,22 @@ export class CategoriesService {
     }
 
     await this.categoriesRepository.delete(id);
+  }
+
+  async update({
+    id,
+    updateCategoryDto,
+  }: {
+    id: number;
+    updateCategoryDto: UpdateCategoryDto;
+  }): Promise<Category> {
+    const category = await this.categoriesRepository.findOneBy({
+      c_id: id,
+    });
+    if (!category) {
+      throw new CategoryNotFoundException(id);
+    }
+    const updatedCategory = Object.assign(category, updateCategoryDto);
+    return this.categoriesRepository.save(updatedCategory);
   }
 }
