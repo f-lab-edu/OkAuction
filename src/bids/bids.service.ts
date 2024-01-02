@@ -64,7 +64,7 @@ export class BidsService {
   }: {
     bidId: number;
     userId: number;
-  }): Promise<void> {
+  }): Promise<string> {
     const bid = await this.bidsRepository.findOneBy({ id: bidId });
     if (!bid) {
       throw new BidNotFoundException(bidId);
@@ -74,6 +74,8 @@ export class BidsService {
       throw new UnauthorizedBidAccessException();
     }
     await this.bidsRepository.delete(bidId);
+
+    return 'success';
   }
 
   async getBidsByProduct(productId: number): Promise<Bid[]> {

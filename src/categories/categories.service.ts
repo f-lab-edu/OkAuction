@@ -42,7 +42,7 @@ export class CategoriesService {
     return category;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<string> {
     // 1차 카테고리로 참조하는 제품이 있는지 확인
     const relatedProductsPrimary = await this.productsRepository.find({
       where: { c_id: id },
@@ -61,6 +61,7 @@ export class CategoriesService {
     }
 
     await this.categoriesRepository.delete(id);
+    return 'success';
   }
 
   async update({

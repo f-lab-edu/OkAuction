@@ -1,0 +1,131 @@
+@startuml
+actor Client
+
+entity "BidsController" as Controller
+
+entity "BidsService" as Service
+
+database "BidsRepository" as BidsRepo
+database "ProductsRepository" as ProductsRepo
+
+' placeBid
+Client -> Controller : POST /bids
+activate Controller
+Controller -> Service : placeBid(createBidDto)
+activate Service
+Service -> ProductsRepo : findOneBy(productId)
+activate ProductsRepo
+ProductsRepo --> Service : product
+deactivate ProductsRepo
+Service -> Service : 제품이 존재하는지 체크
+alt 제품이 존재하면
+  Service -> Service : 제품경매가 진행중인지, 적절한 입찰가인지 체크
+  alt 입찰이 유효하면
+    Service -> BidsRepo : save(newBid)
+    activate BidsRepo
+    BidsRepo --> Service : newBid
+    deactivate BidsRepo
+    Service -> ProductsRepo : save(updatedProduct)
+    activate ProductsRepo
+    ProductsRepo --> Service
+    deactivate ProductsRepo
+  else 입찰이 유효하지 않으면
+    Service --> Controller : '유효하지 않은 입찰' 에러를 던짐
+  end
+else 제품이 존재하지 않으면
+  Service --> Controller : '제품이 존재하지 않음' 에러를 던짐
+end
+Service --> Controller : newBid
+deactivate Service
+Controller --> Client : newBid
+deactivate Controller
+
+' Remove
+Client -> Controller : DELETE /bids/:bidId
+activate Controller
+Controller -> Service : remove(bidId, userId)
+activate Service
+Service -> BidsRepo : findOneBy(bidId)
+activate BidsRepo
+BidsRepo --> Service : bid
+deactivate BidsRepo
+Service -> Service : 입찰이 존재하는지 확인
+alt 입찰이 존재하면
+  Service -> Service : 접근 가능한 유저인지 확인
+  alt 인가된 유저이면
+    Service -> BidsRepo : delete(bidId)
+    BidsRepo --> Service
+    Service --> Controller : 'success'
+  else 인가 실패시
+    Service --> Controller : 입찰 접근 실패 에러를 던짐
+  end
+else 입찰이 존재하지 않으면
+  Service --> Controller : 입찰 존재하지 않음 에러를 던짐
+end
+deactivate Service
+Controller --> Client : response ('success' or exception)
+deactivate Controller
+
+
+' Find All
+Client -> Controller : GET /bids
+activate Controller
+Controller -> Service : findAll()
+activate Service
+Service -> BidsRepo : find()
+activate BidsRepo
+BidsRepo --> Service : bids[]
+deactivate BidsRepo
+Service --> Controller : bids[]
+deactivate Service
+Controller --> Client : bids[]
+deactivate Controller
+
+' Find One
+Client -> Controller : GET /bids/:id
+activate Controller
+Controller -> Service : findOne(id)
+activate Service
+Service -> BidsRepo : findOneBy(id)
+activate BidsRepo
+BidsRepo --> Service : bid
+deactivate BidsRepo
+Service -> Service : 입찰이 존재하는지 확인
+alt 입찰이 존재하면
+  Service --> Controller : bid
+else 입찰이 존재하지 않으면
+  Service --> Controller : 입찰을 찾을 수 없음 에러를 던짐
+end
+deactivate Service
+Controller --> Client : bid or exception
+deactivate Controller
+
+' Get Bids By Product
+Client -> Controller : GET /bids/product/:productId
+activate Controller
+Controller -> Service : getBidsByProduct(productId)
+activate Service
+Service -> BidsRepo : find({ where: { products_id: productId } })
+activate BidsRepo
+BidsRepo --> Service : bids[]
+deactivate BidsRepo
+Service --> Controller : bids[]
+deactivate Service
+Controller --> Client : bids[]
+deactivate Controller
+
+' Get Bids By User
+Client -> Controller : GET /bids/user/:userId
+activate Controller
+Controller -> Service : getBidsByUser(userId)
+activate Service
+Service -> BidsRepo : find({ where: { user_id: userId } })
+activate BidsRepo
+BidsRepo --> Service : bids[]
+deactivate BidsRepo
+Service --> Controller : bids[]
+deactivate Service
+Controller --> Client : bids[]
+deactivate Controller
+
+@enduml

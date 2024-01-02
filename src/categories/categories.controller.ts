@@ -33,7 +33,7 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.categoriesService.remove(id);
   }
 

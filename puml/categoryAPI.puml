@@ -1,0 +1,123 @@
+@startuml
+actor Client
+
+entity "CategoriesController" as Controller
+
+entity "CategoriesService" as Service
+
+database "CategoriesRepository" as CategoriesRepo
+database "ProductsRepository" as ProductsRepo
+
+' Create
+Client -> Controller : POST /categories
+activate Controller
+Controller -> Service : create(createCategoryDto)
+activate Service
+Service -> CategoriesRepo : findOneBy(c_name)
+activate CategoriesRepo
+CategoriesRepo --> Service : exisingCategory
+deactivate CategoriesRepo
+Service -> Service : 카테고리명 중복체크
+alt 카테고리 중복 시
+  Service --> Controller : throw CategoryAlreadyExistsException
+else 카테고리 중복 아닐 시
+  Service -> CategoriesRepo : save(category)
+  activate CategoriesRepo
+  CategoriesRepo --> Service : category
+  deactivate CategoriesRepo
+end
+Service --> Controller : category
+deactivate Service
+Controller --> Client : category
+deactivate Controller
+
+' Remove
+Client -> Controller : DELETE /categories/:id
+activate Controller
+Controller -> Service : remove(id)
+activate Service
+Service -> ProductsRepo : find({ where: { c_id: id } })
+activate ProductsRepo
+ProductsRepo --> Service : relatedProductsPrimary
+deactivate ProductsRepo
+Service -> Service : 1차 카테고리로 등록된 상품이 있는지 확인
+alt 1차 카테고리로 등록된 상품이 있을 시
+  Service --> Controller : 삭제 불가 에러 던짐
+else 1차 카테고리로 등록된 상품이 없을 시
+  Service -> ProductsRepo : find({ where: { c_id2: id } })
+  activate ProductsRepo
+  ProductsRepo --> Service : relatedProductsSecondary
+  deactivate ProductsRepo
+  Service -> Service : 2차 카테고리로 등록된 상품이 있는지 확인
+  alt 2차 카테고리로 등록된 상품이 있을 시
+    Service --> Controller : 삭제 불가 에러 던짐
+  else 2차 카테고리로 등록된 상품이 없을 시
+    Service -> CategoriesRepo : delete(id)
+    activate CategoriesRepo
+    CategoriesRepo --> Service
+    deactivate CategoriesRepo
+    Service --> Controller : 'success'
+  end
+end
+deactivate Service
+Controller --> Client : response ('success' or exception)
+deactivate Controller
+
+' Update
+Client -> Controller : PUT /categories/:id
+activate Controller
+Controller -> Service : update(id, updateCategoryDto)
+activate Service
+Service -> CategoriesRepo : findOneBy(c_id)
+activate CategoriesRepo
+CategoriesRepo --> Service : category
+deactivate CategoriesRepo
+Service -> Service : 카테고리가 존재하는지 확인
+alt 카테고리가 존재할 시
+  Service -> CategoriesRepo : save(updatedCategory)
+  activate CategoriesRepo
+  CategoriesRepo --> Service : updatedCategory
+  deactivate CategoriesRepo
+  Service --> Controller : updatedCategory
+else 카테고리가 존재하지 않을 시
+  Service --> Controller : 카테고리 찾을 수 없음 에러 던짐
+end
+deactivate Service
+Controller --> Client : updatedCategory or exception
+deactivate Controller
+
+' Find All
+Client -> Controller : GET /categories
+activate Controller
+Controller -> Service : findAll()
+activate Service
+Service -> CategoriesRepo : find()
+activate CategoriesRepo
+CategoriesRepo --> Service : categories[]
+deactivate CategoriesRepo
+Service --> Controller : categories[]
+deactivate Service
+Controller --> Client : categories[]
+deactivate Controller
+
+' Find One
+Client -> Controller : GET /categories/:id
+activate Controller
+Controller -> Service : findOne(id)
+activate Service
+Service -> CategoriesRepo : findOneBy(c_id)
+activate CategoriesRepo
+CategoriesRepo --> Service : category
+deactivate CategoriesRepo
+Service -> Service : 카테고리가 존재하는지 확인
+alt 카테고리가 존재할 시
+  Service --> Controller : category
+else 카테고리가 존재하지 않을 시
+  Service --> Controller : 카테고리 찾을 수 없음 에러 던짐
+end
+deactivate Service
+Controller --> Client : category or exception
+deactivate Controller
+
+
+@enduml

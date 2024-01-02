@@ -1,0 +1,131 @@
+@startuml
+actor Client
+
+entity "UsersController" as Controller
+
+entity "UsersService" as Service
+
+database "UsersRepository" as UsersRepo
+database "ProductsRepository" as ProductsRepo
+database "BidsRepository" as BidsRepo
+database "OrdersRepository" as OrdersRepo
+
+' Create
+Client -> Controller : POST /users
+activate Controller
+Controller -> Service : create(createUserDto)
+activate Service
+Service -> UsersRepo : create and save(user)
+activate UsersRepo
+UsersRepo --> Service : user
+deactivate UsersRepo
+Service --> Controller : user
+deactivate Service
+Controller --> Client : user
+deactivate Controller
+
+' Find All
+Client -> Controller : GET /users
+activate Controller
+Controller -> Service : findAll()
+activate Service
+Service -> UsersRepo : find()
+activate UsersRepo
+UsersRepo --> Service : users[]
+deactivate UsersRepo
+Service --> Controller : users[]
+deactivate Service
+Controller --> Client : users[]
+deactivate Controller
+
+' Find One
+Client -> Controller : GET /users/:id
+activate Controller
+Controller -> Service : findOne(id)
+activate Service
+Service -> UsersRepo : findOneBy(id)
+activate UsersRepo
+UsersRepo --> Service : user
+deactivate UsersRepo
+Service --> Controller : user
+deactivate Service
+Controller --> Client : user
+deactivate Controller
+
+' Update User Sequence
+Client -> Controller : PUT /users/:id
+activate Controller
+Controller -> Service : update(id, updateUserDto)
+activate Service
+Service -> UsersRepo : findOneBy(id)
+activate UsersRepo
+UsersRepo --> Service : user
+deactivate UsersRepo
+Service -> Service : 존재하는 유저인지 확인
+alt 유저가 존재하는 경우
+  Service -> UsersRepo : save(updatedUser)
+  activate UsersRepo
+  UsersRepo --> Service : updatedUser
+  deactivate UsersRepo
+  Service --> Controller : updatedUser
+else 유저가 존재하지 않는 경우
+  Service --> Controller : 유저를 찾을 수 없음 예외발생
+end
+deactivate Service
+Controller --> Client : updatedUser or exception
+deactivate Controller
+
+' Remove
+Client -> Controller : DELETE /users/:id
+activate Controller
+Controller -> Service : remove(id)
+activate Service
+Service -> UsersRepo : findOneBy(id)
+activate UsersRepo
+UsersRepo --> Service : user
+deactivate UsersRepo
+Service -> Service : 존재하는 유저인지 확인
+alt 유저가 존재하는 경우
+  Service -> ProductsRepo : find({user_id: id})
+  activate ProductsRepo
+  ProductsRepo --> Service : products
+  deactivate ProductsRepo
+  Service -> Service : 유저가 등록한 상품이 있는지 확인
+  alt 등록한 상품이 있는 경우
+    Service --> Controller : throw UserDeletionException("상품")
+  else 등록한 상품이 없는 경우
+    Service -> BidsRepo : find({user_id: id})
+    activate BidsRepo
+    BidsRepo --> Service : bids
+    deactivate BidsRepo
+    Service -> ProductsRepo : find({id: In(productIds)})
+    activate ProductsRepo
+    ProductsRepo --> Service : productWithBidsAndNotSold
+    deactivate ProductsRepo
+    alt 유저에게 경매가 진행중인 최고 입찰이 있는 경우
+      Service --> Controller : throw UserDeletionException("입찰")
+    else 유저에게 경매가 진행중인 최고 입찰이 없는 경우
+      Service -> OrdersRepo : find({user_id: id})
+      activate OrdersRepo
+      OrdersRepo --> Service : ordersNotEnd
+      deactivate OrdersRepo
+      alt 상태가 'End'가 아닌 주문이 있는 경우
+        Service --> Controller : throw UserDeletionException("주문")
+      else 진행중인 주문이 없는 경우
+        Service -> UsersRepo : remove(user)
+        activate UsersRepo
+        UsersRepo --> Service
+        deactivate UsersRepo
+        Service --> Controller : 'success'
+      end
+    end
+  end
+else 유저가 존재하지 않는 경우
+  Service --> Controller : throw UserNotFoundException
+end
+deactivate Service
+Controller --> Client : response ('success' or exception)
+deactivate Controller
+
+
+@enduml
