@@ -28,7 +28,7 @@ export class CreateOrderDto {
   @IsOptional()
   used_point?: number; // 기본값이 있으므로 Optional
 
-  @IsIn(['Temp', 'Confirm'])
+  @IsIn(['Temp', 'Confirmed', 'End'])
   o_status: string;
 
   @IsIn(['Pending', 'Prepared', 'Shipped', 'Delivered', 'Returned'])

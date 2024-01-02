@@ -44,7 +44,7 @@ export class Order {
 
   @Column({
     type: 'enum',
-    enum: ['Temp', 'Confirm'],
+    enum: ['Temp', 'Confirmed', 'End'],
     default: 'Temp',
   })
   o_status: string;

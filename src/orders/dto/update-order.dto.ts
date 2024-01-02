@@ -29,7 +29,7 @@ export class UpdateOrderDto {
   @IsOptional()
   used_point?: number;
 
-  @IsIn(['Temp', 'Confirm'])
+  @IsIn(['Temp', 'Confirmed', 'End'])
   @IsOptional()
   o_status?: string;
 

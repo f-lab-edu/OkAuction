@@ -70,16 +70,19 @@ export class ProductsService {
   }
 
   async remove(id: number): Promise<void> {
-    // 먼저 해당 Product에 연결된 Bids가 있는지 확인
+    const product = await this.productsRepository.findOneBy({ id });
+    if (!product) {
+      throw new ProductNotFoundException(id);
+    }
+    if (product.p_sales_status === 'Sold') {
+      throw new ProductAlreadySoldException(id);
+    }
+    // 해당 Product에 연결된 Bids가 있는지 확인
     const relatedBids = await this.bidRepository.find({
       where: { products_id: id },
     });
     if (relatedBids.length > 0) {
       throw new ProductDeletionException(id);
-    }
-    const product = await this.productsRepository.findOneBy({ id });
-    if (!product) {
-      throw new ProductNotFoundException(id);
     }
 
     await this.productsRepository.delete(id);
