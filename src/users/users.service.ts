@@ -8,6 +8,7 @@ import { UserDeletionException } from './exceptions/user-deletion.exception';
 import { Product } from 'src/products/product.entity';
 import { Bid } from 'src/bids/bid.entity';
 import { Order } from 'src/orders/order.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -35,7 +36,22 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id: id });
   }
 
-  async remove(id: number): Promise<void> {
+  async update({
+    id,
+    updateUserDto,
+  }: {
+    id: number;
+    updateUserDto: UpdateUserDto;
+  }): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) {
+      throw new UserNotFoundException(id);
+    }
+    const updatedUser = Object.assign(user, updateUserDto);
+    return this.usersRepository.save(updatedUser);
+  }
+
+  async remove(id: number): Promise<string> {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) {
       throw new UserNotFoundException(id);
@@ -48,11 +64,10 @@ export class UsersService {
       throw new UserDeletionException(id, '상품');
     }
 
-    // 해당 사용자가 등록한 입찰이 있는지 확인
+    // 경매가 진행 중이고 최고가 입찰자인 상품이 있는지 확인
     const bids = await this.bidsRepository.find({
       where: { user_id: id },
     });
-    // 유저가 최고 입찰자이고 경매가 종료되지 않은 상품이 있는지 확인
     const productIds = bids.map((bid) => bid.products_id);
     const productWithBids = await this.productsRepository.find({
       where: { id: In(productIds) },
@@ -74,5 +89,6 @@ export class UsersService {
     }
 
     await this.usersRepository.remove(user);
+    return 'success';
   }
 }
