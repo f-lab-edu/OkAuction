@@ -31,12 +31,6 @@ export class Product {
   p_info: string;
 
   @Column({ default: 0 })
-  p_direct: number;
-
-  @CreateDateColumn()
-  p_dur: Date;
-
-  @Column({ default: 0 })
   p_b_price: number;
 
   @CreateDateColumn()

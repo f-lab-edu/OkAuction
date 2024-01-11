@@ -57,6 +57,12 @@ export class ProductsService {
       }
     }
 
+    //end_time은 start_time에서 p_dur_date(경매 진행일)을 더한 값
+    const { start_time, p_dur_date } = createProductDto;
+    const end_time = new Date(start_time);
+    end_time.setDate(end_time.getDate() + p_dur_date);
+    createProductDto.end_time = end_time;
+
     const product = this.productsRepository.create(createProductDto);
     return this.productsRepository.save(product);
   }
