@@ -3,7 +3,15 @@
 
 ###
 # 특정 제품에 대한 모든 입찰 조회
-GET {{host}}/bids?productId=1
+GET {{host}}/bids/product/1
+
+###
+# 특정 유저에 대한 모든 입찰 조회
+GET {{host}}/bids/user/1
+
+###
+# 특정 입찰 조회
+GET {{host}}/bids/1
 
 ###
 # 새 입찰 추가

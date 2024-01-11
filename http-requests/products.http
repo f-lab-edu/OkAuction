@@ -32,7 +32,7 @@ Accept: {{contentType}}
   "p_addr_postcode": 12345,
   "p_like": 0,
   "start_time": "2023-12-25T09:00:00.000Z",
-  "end_time": "2023-12-30T09:00:00.000Z",
+  "end_time": "2024-01-30T09:00:00.000Z",
   "highest_bid": 15000,
   "main_img_id": "img_12345"
 }
