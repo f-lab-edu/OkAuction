@@ -46,3 +46,23 @@ src/
 프로젝트의 가독성 향상: 새로운 개발자가 프로젝트에 참여할 때, 각 도메인과 관련된 모든 요소를 한 곳에서 찾을 수 있어 빠르게 이해하고 작업에 참여할 수 있습니다.
 
 확장성: 새로운 기능이나 도메인을 추가하는 경우, 기존 구조에 쉽게 통합할 수 있으며, 각 도메인을 독립적으로 관리하고 확장할 수 있습니다.
+
+>
+
+### API 시퀀스 다이어그램
+
+#### BidsAPI
+
+![BidsAPI](https://raw.githubusercontent.com/f-lab-edu/OkAuction/restclient/puml/bidsAPI.png)
+
+#### ProductsAPI
+
+![ProductsAPI](https://raw.githubusercontent.com/f-lab-edu/OkAuction/restclient/puml/productsAPI.png)
+
+#### CategoriesAPI
+
+![Categories](https://raw.githubusercontent.com/f-lab-edu/OkAuction/restclient/puml/categoriesAPI.png)
+
+#### UsersAPI
+
+![UsersAPI](https://raw.githubusercontent.com/f-lab-edu/OkAuction/restclient/puml/usersAPI.png)

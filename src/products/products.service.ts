@@ -75,7 +75,10 @@ export class ProductsService {
     return this.productsRepository.findOneBy({ id: id });
   }
 
-  async remove(id: number): Promise<void> {
+
+
+
+  async remove(id: number): Promise<string> {
     const product = await this.productsRepository.findOneBy({ id });
     if (!product) {
       throw new ProductNotFoundException(id);
@@ -92,6 +95,8 @@ export class ProductsService {
     }
 
     await this.productsRepository.delete(id);
+
+    return 'success';
   }
 
   //업테이트는 본인만 할 수 있도록 나중에 수정

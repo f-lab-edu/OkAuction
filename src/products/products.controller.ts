@@ -61,12 +61,12 @@ export class ProductsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
-  ) {
+  ): Promise<Product> {
     return this.productsService.update({ id, updateProductDto });
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.productsService.remove(id);
   }
 }
