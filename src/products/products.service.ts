@@ -14,6 +14,7 @@ import { User } from 'src/users/user.entity';
 import { UserNotFoundException } from 'src/users/exceptions/user-not-found.exception';
 import { Bid } from 'src/bids/bid.entity';
 import { ProductDeletionException } from './exceptions/product-deletion.exception';
+import { InvalidProductTimeException } from './exceptions/invalid-product-time.exception';
 
 @Injectable()
 export class ProductsService {
@@ -57,10 +58,17 @@ export class ProductsService {
       }
     }
 
+    //start_time이 현재 시간보다 빠른지 확인
+    const currentTime = new Date();
+    console.log(createProductDto.start_time instanceof Date);
+    if (createProductDto.start_time < currentTime) {
+      throw new InvalidProductTimeException();
+    }
+
     //end_time은 start_time에서 p_dur_date(경매 진행일)을 더한 값
     const { start_time, p_dur_date } = createProductDto;
     const end_time = new Date(start_time);
-    end_time.setDate(end_time.getDate() + p_dur_date);
+    end_time.setSeconds(end_time.getSeconds() + p_dur_date);
     createProductDto.end_time = end_time;
 
     const product = this.productsRepository.create(createProductDto);
@@ -74,9 +82,6 @@ export class ProductsService {
   findOne(id: number): Promise<Product> {
     return this.productsRepository.findOneBy({ id: id });
   }
-
-
-
 
   async remove(id: number): Promise<string> {
     const product = await this.productsRepository.findOneBy({ id });
@@ -139,8 +144,11 @@ export class ProductsService {
     return this.productsRepository.save(updatedProduct);
   }
 
-  async updateProductStatus(id: number): Promise<void> {
-    await this.productsRepository.save({ id, p_sales_status: 'Sold' });
+  async updateProductStatus(
+    id: number,
+    status: 'Available' | 'Pending' | 'Sold',
+  ): Promise<void> {
+    await this.productsRepository.save({ id, p_sales_status: status });
   }
 }
 

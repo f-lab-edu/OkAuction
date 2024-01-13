@@ -10,6 +10,7 @@ import { Bid } from './bids/bid.entity';
 import { BidsModule } from './bids/bids.module';
 import { Order } from './orders/order.entity';
 import { OrdersModule } from './orders/orders.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -23,6 +24,12 @@ import { OrdersModule } from './orders/orders.module';
       entities: [User, Product, Category, Bid, Order],
       synchronize: true,
       logging: true,
+    }),
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
     }),
     UsersModule,
     ProductsModule,

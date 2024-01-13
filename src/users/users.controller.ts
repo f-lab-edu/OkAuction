@@ -37,7 +37,7 @@ export class UsersController {
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update({ id, updateUserDto });
   }
@@ -45,13 +45,5 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.usersService.remove(id);
-  }
-
-  @Put(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return this.usersService.update({ id, updateUserDto });
   }
 }

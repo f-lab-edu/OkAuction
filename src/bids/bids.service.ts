@@ -30,6 +30,7 @@ export class BidsService {
 
     // 경매가 진행중인지 확인
     const currentTime = new Date();
+    console.log(product.start_time instanceof Date);
     if (currentTime < product.start_time || currentTime > product.end_time) {
       throw new BidNotAllowedException();
     }
