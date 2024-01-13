@@ -1,4 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsIn } from 'class-validator';
+import { OrderStatus } from '../enums/order-status.enum';
+import { OrderShipping } from '../enums/order-shipping.enum';
 
 export class UpdateOrderDto {
   @IsNumber()
@@ -29,11 +31,11 @@ export class UpdateOrderDto {
   @IsOptional()
   used_point?: number;
 
-  @IsIn(['Temp', 'Confirmed', 'End'])
+  @IsIn(Object.values(OrderStatus))
   @IsOptional()
-  o_status?: string;
+  o_status?: OrderStatus;
 
-  @IsIn(['Pending', 'Prepared', 'Shipped', 'Delivered', 'Returned'])
+  @IsIn(Object.values(OrderShipping))
   @IsOptional()
-  o_shipping?: string;
+  o_shipping?: OrderShipping;
 }

@@ -1,4 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsIn } from 'class-validator';
+import { OrderStatus } from '../enums/order-status.enum';
+import { OrderShipping } from '../enums/order-shipping.enum';
 
 export class CreateOrderDto {
   @IsNumber()
@@ -28,9 +30,9 @@ export class CreateOrderDto {
   @IsOptional()
   used_point?: number; // 기본값이 있으므로 Optional
 
-  @IsIn(['Temp', 'Confirmed', 'End'])
-  o_status: string;
+  @IsIn(Object.values(OrderStatus))
+  o_status: OrderStatus;
 
-  @IsIn(['Pending', 'Prepared', 'Shipped', 'Delivered', 'Returned'])
-  o_shipping: string;
+  @IsIn(Object.values(OrderShipping))
+  o_shipping: OrderShipping;
 }

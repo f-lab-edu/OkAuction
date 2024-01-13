@@ -12,6 +12,8 @@ import { InvalidOrderStatusException } from './exceptions/invalid-order-status.e
 import { Product } from 'src/products/product.entity';
 import { ConfirmOrderDto } from './dto/confirm-order.dto';
 import { InsufficientFundsException } from './exceptions/insufficient-funds.exception';
+import { OrderShipping } from './enums/order-shipping.enum';
+import { OrderStatus } from './enums/order-status.enum';
 
 @Injectable()
 export class OrdersService {
@@ -58,7 +60,7 @@ export class OrdersService {
       throw new OrderNotFoundException(id);
     }
 
-    if (order.o_status !== 'Temp') {
+    if (order.o_status !== OrderStatus.Temp) {
       throw new InvalidOrderStatusException(order.o_status);
     }
 
@@ -74,7 +76,7 @@ export class OrdersService {
     await this.userRepository.save(user);
 
     const updatedOrder = Object.assign(order, confirmOrderDto);
-    updatedOrder.o_status = 'Confirmed';
+    updatedOrder.o_status = OrderStatus.Confirmed;
     return this.orderRepository.save(updatedOrder);
   }
 
@@ -110,8 +112,11 @@ export class OrdersService {
       throw new OrderNotFoundException(id);
     }
 
-    //업데이트는 prepared, pending 상태에서만 가능
-    if (order.o_shipping !== 'prepared' && order.o_shipping !== 'pending') {
+    //수정은 prepared, pending 상태에서만 가능
+    if (
+      order.o_shipping !== OrderShipping.Prepared &&
+      order.o_shipping !== OrderShipping.Pending
+    ) {
       throw new InvalidOrderStatusException(order.o_shipping);
     }
 

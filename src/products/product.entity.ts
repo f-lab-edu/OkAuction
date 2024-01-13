@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Order } from 'src/orders/order.entity';
+import { ProductSalesStatus } from './enums/product-sales-status.enum';
 
 @Entity()
 export class Product {
@@ -47,10 +48,10 @@ export class Product {
 
   @Column({
     type: 'enum',
-    enum: ['Available', 'Pending', 'Sold'],
-    default: 'Available',
+    enum: ProductSalesStatus,
+    default: ProductSalesStatus.Pending,
   })
-  p_sales_status: string;
+  p_sales_status: ProductSalesStatus;
 
   @Column()
   p_address: string;

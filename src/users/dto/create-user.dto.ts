@@ -6,6 +6,8 @@ import {
   IsNumber,
   IsIn,
 } from 'class-validator';
+import { UserRole } from '../enums/user-role.enum';
+import { UserSignout } from '../enums/user-signout.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -64,9 +66,9 @@ export class CreateUserDto {
   @IsOptional()
   u_point?: number;
 
-  @IsIn(['Admin', 'User', 'Guest'])
-  u_role: string;
+  @IsIn(Object.values(UserRole))
+  u_role: UserRole;
 
-  @IsIn(['Y', 'N'])
-  u_signout: string;
+  @IsIn(Object.values(UserSignout))
+  u_signout: UserSignout;
 }

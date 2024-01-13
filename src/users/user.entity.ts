@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Product } from '../products/product.entity';
 import { Order } from 'src/orders/order.entity';
+import { UserRole } from './enums/user-role.enum';
+import { UserSignout } from './enums/user-signout.enum';
 
 @Entity('users')
 export class User {
@@ -57,17 +59,17 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: ['Admin', 'User', 'Guest'],
-    default: 'User',
+    enum: UserRole,
+    default: UserRole.User,
   })
-  u_role: string;
+  u_role: UserRole;
 
   @Column({
     type: 'enum',
-    enum: ['Y', 'N'],
-    default: 'N',
+    enum: UserSignout,
+    default: UserSignout.N,
   })
-  u_signout: string;
+  u_signout: UserSignout;
 
   @OneToMany(() => Product, (product) => product.user)
   products: Product[];

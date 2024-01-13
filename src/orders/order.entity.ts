@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Product } from '../products/product.entity';
+import { OrderStatus } from './enums/order-status.enum';
+import { OrderShipping } from './enums/order-shipping.enum';
 
 @Entity()
 export class Order {
@@ -44,17 +46,17 @@ export class Order {
 
   @Column({
     type: 'enum',
-    enum: ['Temp', 'Confirmed', 'End'],
-    default: 'Temp',
+    enum: OrderStatus,
+    default: OrderStatus.Temp,
   })
-  o_status: string;
+  o_status: OrderStatus;
 
   @Column({
     type: 'enum',
-    enum: ['Pending', 'Prepared', 'Shipped', 'Delivered', 'Returned'],
-    default: 'Pending',
+    enum: OrderShipping,
+    default: OrderShipping.Pending,
   })
-  o_shipping: string;
+  o_shipping: OrderShipping;
 
   @Column({ default: 0 })
   used_point: number;

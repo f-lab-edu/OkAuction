@@ -14,6 +14,7 @@ import { User } from 'src/users/user.entity';
 import { UserNotFoundException } from 'src/users/exceptions/user-not-found.exception';
 import { Bid } from 'src/bids/bid.entity';
 import { ProductDeletionException } from './exceptions/product-deletion.exception';
+import { ProductSalesStatus } from './enums/product-sales-status.enum';
 
 @Injectable()
 export class ProductsService {
@@ -75,15 +76,12 @@ export class ProductsService {
     return this.productsRepository.findOneBy({ id: id });
   }
 
-
-
-
   async remove(id: number): Promise<string> {
     const product = await this.productsRepository.findOneBy({ id });
     if (!product) {
       throw new ProductNotFoundException(id);
     }
-    if (product.p_sales_status === 'Sold') {
+    if (product.p_sales_status === ProductSalesStatus.Sold) {
       throw new ProductAlreadySoldException(id);
     }
     // 해당 Product에 연결된 Bids가 있는지 확인
@@ -99,7 +97,7 @@ export class ProductsService {
     return 'success';
   }
 
-  //업테이트는 본인만 할 수 있도록 나중에 수정
+  //업데이트는 본인만 할 수 있도록 나중에 수정
   async update({
     id,
     updateProductDto,
@@ -108,10 +106,10 @@ export class ProductsService {
     if (!product) {
       throw new ProductNotFoundException(id);
     }
-    if (product.p_sales_status === 'Sold') {
+    if (product.p_sales_status === ProductSalesStatus.Sold) {
       throw new ProductAlreadySoldException(id);
     }
-    if (product.p_sales_status === 'Pending') {
+    if (product.p_sales_status === ProductSalesStatus.Available) {
       throw new InvalidProductStateException(id, product.p_sales_status);
     }
 
@@ -139,8 +137,11 @@ export class ProductsService {
     return this.productsRepository.save(updatedProduct);
   }
 
-  async updateProductStatus(id: number): Promise<void> {
-    await this.productsRepository.save({ id, p_sales_status: 'Sold' });
+  async updateProductStatus(
+    id: number,
+    status: ProductSalesStatus,
+  ): Promise<void> {
+    await this.productsRepository.save({ id, p_sales_status: status });
   }
 }
 

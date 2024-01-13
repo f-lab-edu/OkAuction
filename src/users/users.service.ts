@@ -95,19 +95,4 @@ export class UsersService {
     await this.usersRepository.remove(user);
     return 'success';
   }
-
-  async update({
-    id,
-    updateUserDto,
-  }: {
-    id: number;
-    updateUserDto: UpdateUserDto;
-  }): Promise<User> {
-    const user = await this.usersRepository.findOneBy({ id: id });
-    if (!user) {
-      throw new UserNotFoundException(id);
-    }
-    const updatedUser = Object.assign(user, updateUserDto);
-    return this.usersRepository.save(updatedUser);
-  }
 }

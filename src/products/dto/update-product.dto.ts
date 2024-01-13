@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsDate, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ProductSalesStatus } from '../enums/product-sales-status.enum';
 
 export class UpdateProductDto {
   @IsNumber()
@@ -34,9 +35,9 @@ export class UpdateProductDto {
   @IsOptional()
   p_dur_date?: number;
 
-  @IsIn(['Available', 'Pending', 'Sold'])
+  @IsIn(Object.values(ProductSalesStatus))
   @IsOptional()
-  p_sales_status?: string;
+  p_sales_status?: ProductSalesStatus;
 
   @IsString()
   @IsOptional()
