@@ -42,7 +42,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     return this.usersService.remove(id);
   }
 }

@@ -34,7 +34,7 @@ export class BidsController {
   remove(
     @Param('bidId', ParseIntPipe) bidId: number,
     @Body('userId') userId: number,
-  ): Promise<string> {
+  ): Promise<boolean> {
     return this.bidsService.remove({ bidId, userId });
   }
 

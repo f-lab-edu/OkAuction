@@ -69,7 +69,7 @@ export class BidsService {
   }: {
     bidId: number;
     userId: number;
-  }): Promise<string> {
+  }): Promise<boolean> {
     const bid = await this.bidsRepository.findOneBy({ id: bidId });
     if (!bid) {
       throw new BidNotFoundException(bidId);
@@ -80,7 +80,7 @@ export class BidsService {
     }
     await this.bidsRepository.delete(bidId);
 
-    return 'success';
+    return true;
   }
 
   async getBidsByProduct(productId: number): Promise<Bid[]> {

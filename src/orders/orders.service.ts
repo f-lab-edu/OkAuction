@@ -92,12 +92,13 @@ export class OrdersService {
     return order;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<boolean> {
     const order = await this.orderRepository.findOneBy({ id: id });
     if (!order) {
       throw new OrderNotFoundException(id);
     }
     await this.orderRepository.remove(order);
+    return true;
   }
 
   async update({

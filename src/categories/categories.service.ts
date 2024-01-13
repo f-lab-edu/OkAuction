@@ -53,7 +53,7 @@ export class CategoriesService {
     return category;
   }
 
-  async remove(id: number): Promise<string> {
+  async remove(id: number): Promise<boolean> {
     // 카테고리가 존재하는지 확인
     const category = await this.categoriesRepository.findOneBy({ c_id: id });
     if (!category) {
@@ -88,7 +88,7 @@ export class CategoriesService {
     }
 
     await this.categoriesRepository.delete(id);
-    return 'success';
+    return true;
   }
 
   async update({

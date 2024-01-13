@@ -55,7 +55,7 @@ export class UsersService {
     return this.usersRepository.save(updatedUser);
   }
 
-  async remove(id: number): Promise<string> {
+  async remove(id: number): Promise<boolean> {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) {
       throw new UserNotFoundException(id);
@@ -93,6 +93,6 @@ export class UsersService {
     }
 
     await this.usersRepository.remove(user);
-    return 'success';
+    return true;
   }
 }
