@@ -1,0 +1,30 @@
+@host = http://localhost:3000
+@contentType = application/json
+
+###
+# 특정 제품에 대한 모든 입찰 조회
+GET {{host}}/bids/product/1
+
+###
+# 특정 유저에 대한 모든 입찰 조회
+GET {{host}}/bids/user/1
+
+###
+# 특정 입찰 조회
+GET {{host}}/bids/1
+
+###
+# 새 입찰 추가
+POST {{host}}/bids
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "user_id": 1,
+  "products_id": 1,
+  "amount": 20000
+}
+
+###
+# 입찰 삭제
+DELETE {{host}}/bids/1

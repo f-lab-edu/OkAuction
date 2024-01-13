@@ -69,20 +69,23 @@ export class ProductsService {
     return this.productsRepository.findOneBy({ id: id });
   }
 
-  async remove(id: number): Promise<void> {
-    // 먼저 해당 Product에 연결된 Bids가 있는지 확인
+  async remove(id: number): Promise<string> {
+    const product = await this.productsRepository.findOneBy({ id });
+    if (!product) {
+      throw new ProductNotFoundException(id);
+    }
+
+    // 해당 Product에 연결된 Bids가 있는지 확인
     const relatedBids = await this.bidRepository.find({
       where: { products_id: id },
     });
     if (relatedBids.length > 0) {
       throw new ProductDeletionException(id);
     }
-    const product = await this.productsRepository.findOneBy({ id });
-    if (!product) {
-      throw new ProductNotFoundException(id);
-    }
 
     await this.productsRepository.delete(id);
+
+    return 'success';
   }
 
   //업테이트는 본인만 할 수 있도록 나중에 수정

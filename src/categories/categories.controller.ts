@@ -6,10 +6,12 @@ import {
   Param,
   Post,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './category.entity';
 import { CategoriesService } from './categories.service';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -31,7 +33,15 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return this.categoriesService.remove(id);
+  }
+
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
+    return this.categoriesService.update({ id, updateCategoryDto });
   }
 }
