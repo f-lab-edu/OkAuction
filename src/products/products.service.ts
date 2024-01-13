@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { EntityManager, IsNull, Not, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './product.entity';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -15,6 +15,7 @@ import { UserNotFoundException } from 'src/users/exceptions/user-not-found.excep
 import { Bid } from 'src/bids/bid.entity';
 import { ProductDeletionException } from './exceptions/product-deletion.exception';
 import { ProductSalesStatus } from './enums/product-sales-status.enum';
+import { BidsService } from 'src/bids/bids.service';
 
 @Injectable()
 export class ProductsService {
@@ -27,6 +28,7 @@ export class ProductsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Bid)
     private readonly bidRepository: Repository<Bid>,
+    private readonly bidService: BidsService,
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
@@ -80,9 +82,6 @@ export class ProductsService {
     const product = await this.productsRepository.findOneBy({ id });
     if (!product) {
       throw new ProductNotFoundException(id);
-    }
-    if (product.p_sales_status === ProductSalesStatus.Sold) {
-      throw new ProductAlreadySoldException(id);
     }
     // 해당 Product에 연결된 Bids가 있는지 확인
     const relatedBids = await this.bidRepository.find({
@@ -142,6 +141,14 @@ export class ProductsService {
     status: ProductSalesStatus,
   ): Promise<void> {
     await this.productsRepository.save({ id, p_sales_status: status });
+  }
+
+  async deleteUserProducts(id: number, manager: EntityManager): Promise<void> {
+    const products = await manager.find(Product, { where: { user_id: id } });
+    for (const product of products) {
+      await this.bidService.deleteProductBids(product.id, manager);
+      await manager.delete(Product, { id: product.id });
+    }
   }
 }
 

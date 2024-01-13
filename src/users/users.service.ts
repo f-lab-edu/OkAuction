@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { UserNotFoundException } from './exceptions/user-not-found.exception';
@@ -9,6 +9,8 @@ import { Product } from 'src/products/product.entity';
 import { Bid } from 'src/bids/bid.entity';
 import { Order } from 'src/orders/order.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ProductsService } from 'src/products/products.service';
+import { ProductSalesStatus } from 'src/products/enums/product-sales-status.enum';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +23,8 @@ export class UsersService {
     private readonly bidsRepository: Repository<Bid>,
     @InjectRepository(Order)
     private readonly ordersRepository: Repository<Order>,
+    private readonly dataSource: DataSource,
+    private readonly productsService: ProductsService,
   ) {}
 
   create(createUserDto: CreateUserDto): Promise<User> {
@@ -60,13 +64,17 @@ export class UsersService {
     if (!user) {
       throw new UserNotFoundException(id);
     }
-    // 해당 사용자가 등록한 상품이 있는지 확인
+    // 해당 사용자가 등록한 경매 진행 중인 상품이 있는지 확인
     const products = await this.productsRepository.find({
       where: { user_id: id },
     });
-    if (products.length > 0) {
-      throw new UserDeletionException(id, '상품');
+    const productsNotSold = products.filter(
+      (product) => product.p_sales_status == ProductSalesStatus.Available,
+    );
+    if (productsNotSold.length > 0) {
+      throw new UserDeletionException(id, '경매');
     }
+    await this.productsRepository.remove(products);
 
     // 경매가 진행 중이고 최고가 입찰자인 상품이 있는지 확인
     const bids = await this.bidsRepository.find({
@@ -82,6 +90,7 @@ export class UsersService {
     if (productWithBidsAndNotSold.length > 0) {
       throw new UserDeletionException(id, '입찰');
     }
+    await this.bidsRepository.remove(bids);
 
     // 유저가 주문상태가 End가 아닌 주문이 있는지 확인
     const orders = await this.ordersRepository.find({
@@ -91,8 +100,13 @@ export class UsersService {
     if (ordersNotEnd.length > 0) {
       throw new UserDeletionException(id, '주문');
     }
+    await this.ordersRepository.remove(orders);
 
     await this.usersRepository.remove(user);
+    // await this.dataSource.transaction(async (manager) => {
+    //   await this.productsService.deleteUserProducts(id, manager);
+    //   await manager.delete(User, { id });
+    // });
     return true;
   }
 }

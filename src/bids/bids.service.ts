@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { CreateBidDto } from './dto/create-bid.dto';
 import { Bid } from './bid.entity';
 import { Product } from 'src/products/product.entity';
@@ -89,6 +89,14 @@ export class BidsService {
 
   async getBidsByUser(userId: number): Promise<Bid[]> {
     return this.bidsRepository.find({ where: { user_id: userId } });
+  }
+
+  async deleteProductBids(
+    productId: number,
+    manager: EntityManager,
+  ): Promise<boolean> {
+    await manager.delete(Bid, { products_id: productId });
+    return true;
   }
 
   private isProductAvailableForBidding(product: Product): boolean {
