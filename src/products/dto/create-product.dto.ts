@@ -21,13 +21,6 @@ export class CreateProductDto {
   p_info?: string;
 
   @IsNumber()
-  p_direct: number;
-
-  @IsDate()
-  @Type(() => Date)
-  p_dur: Date;
-
-  @IsNumber()
   p_b_price: number;
 
   @IsNumber()
@@ -56,9 +49,8 @@ export class CreateProductDto {
   @Type(() => Date)
   start_time: Date;
 
-  @IsDate()
-  @Type(() => Date)
-  end_time: Date;
+  @IsOptional()
+  end_time?: Date;
 
   @IsNumber()
   @IsOptional()

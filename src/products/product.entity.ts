@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToOne,
 } from 'typeorm';
 import { User } from '../users/user.entity';
+import { Order } from 'src/orders/order.entity';
 
 @Entity()
 export class Product {
@@ -27,12 +29,6 @@ export class Product {
 
   @Column({ length: 1000, nullable: true })
   p_info: string;
-
-  @Column({ default: 0 })
-  p_direct: number;
-
-  @CreateDateColumn()
-  p_dur: Date;
 
   @Column({ default: 0 })
   p_b_price: number;
@@ -82,4 +78,7 @@ export class Product {
 
   @ManyToOne(() => User, (user) => user.products)
   user: User;
+
+  @OneToOne(() => Order, (order) => order.product)
+  order: Order;
 }

@@ -24,15 +24,6 @@ export class UpdateProductDto {
 
   @IsNumber()
   @IsOptional()
-  p_direct?: number;
-
-  @IsDate()
-  @IsOptional()
-  @Type(() => Date)
-  p_dur?: Date;
-
-  @IsNumber()
-  @IsOptional()
   p_b_price?: number;
 
   @IsNumber()

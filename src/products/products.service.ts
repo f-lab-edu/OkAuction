@@ -57,6 +57,12 @@ export class ProductsService {
       }
     }
 
+    //end_time은 start_time에서 p_dur_date(경매 진행일)을 더한 값
+    const { start_time, p_dur_date } = createProductDto;
+    const end_time = new Date(start_time);
+    end_time.setDate(end_time.getDate() + p_dur_date);
+    createProductDto.end_time = end_time;
+
     const product = this.productsRepository.create(createProductDto);
     return this.productsRepository.save(product);
   }
@@ -69,12 +75,17 @@ export class ProductsService {
     return this.productsRepository.findOneBy({ id: id });
   }
 
+
+
+
   async remove(id: number): Promise<string> {
     const product = await this.productsRepository.findOneBy({ id });
     if (!product) {
       throw new ProductNotFoundException(id);
     }
-
+    if (product.p_sales_status === 'Sold') {
+      throw new ProductAlreadySoldException(id);
+    }
     // 해당 Product에 연결된 Bids가 있는지 확인
     const relatedBids = await this.bidRepository.find({
       where: { products_id: id },
@@ -126,6 +137,10 @@ export class ProductsService {
 
     const updatedProduct = Object.assign(product, updateProductDto);
     return this.productsRepository.save(updatedProduct);
+  }
+
+  async updateProductStatus(id: number): Promise<void> {
+    await this.productsRepository.save({ id, p_sales_status: 'Sold' });
   }
 }
 
