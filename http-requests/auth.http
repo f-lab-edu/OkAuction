@@ -21,6 +21,12 @@ Accept: {{contentType}}
 }
 
 ###
+# 페치유저
+GET {{host}}/auth/fetch
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInN1YiI6IuyCrOyaqeyekCDsnbTrpoQiLCJpYXQiOjE3MDUzMjYxNDcsImV4cCI6MTcwNTMyOTc0N30.SIBkCCqHgJ3a77k4OTqWfTPFVg6Zlq0c-vgevjrmvVs
+
+
+###
 # 사용자 정보 업데이트
 PUT {{host}}/users/1
 Content-Type: {{contentType}}

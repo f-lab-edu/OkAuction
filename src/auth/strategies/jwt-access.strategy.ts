@@ -14,7 +14,8 @@ export default class JwtAccessStrategy extends PassportStrategy(
   }
 
   async validate(payload) {
-    //const payload = { userId: user.u_Id, sub: user.u_name };
+    console.log(payload);
+    //const payload = { userId: user.id, sub: user.u_name };
     return {
       id: payload.userId,
       username: payload.sub,
