@@ -18,11 +18,6 @@ export class UpdateUserDto {
   @Length(0, 100)
   u_social?: string;
 
-  @IsString()
-  @IsOptional()
-  @Length(5, 150)
-  u_password?: string;
-
   @IsEmail()
   @IsOptional()
   @Length(0, 50)
