@@ -9,6 +9,8 @@ import { Product } from 'src/products/product.entity';
 import { Bid } from 'src/bids/bid.entity';
 import { Order } from 'src/orders/order.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserAlreadyExistsException } from './exceptions/user-already-exists.exception';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -23,9 +25,23 @@ export class UsersService {
     private readonly ordersRepository: Repository<Order>,
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const { u_id, u_password } = createUserDto;
+    // u_id가 중복되는지 확인
+    const existingUser = await this.usersRepository.findOneBy({
+      u_id: u_id,
+    });
+    if (existingUser) {
+      throw new UserAlreadyExistsException(u_id);
+    }
+    // 패스워드를 암호화
+    const salt = await bcrypt.genSaltSync();
+    const hashedPassword = await bcrypt.hashSync(u_password, salt);
+    createUserDto.u_password = hashedPassword;
     const user = this.usersRepository.create(createUserDto);
-    return this.usersRepository.save(user);
+    const savedUser = await this.usersRepository.save(user);
+    delete savedUser.u_password;
+    return savedUser;
   }
 
   async findAll(): Promise<User[]> {
@@ -94,20 +110,5 @@ export class UsersService {
 
     await this.usersRepository.remove(user);
     return 'success';
-  }
-
-  async update({
-    id,
-    updateUserDto,
-  }: {
-    id: number;
-    updateUserDto: UpdateUserDto;
-  }): Promise<User> {
-    const user = await this.usersRepository.findOneBy({ id: id });
-    if (!user) {
-      throw new UserNotFoundException(id);
-    }
-    const updatedUser = Object.assign(user, updateUserDto);
-    return this.usersRepository.save(updatedUser);
   }
 }
