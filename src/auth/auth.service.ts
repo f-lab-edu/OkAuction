@@ -40,7 +40,7 @@ export class AuthService {
 
   async login(user: UserResponseDto): Promise<LoginResponseDto> {
     // JWT 토큰 생성
-    const payload = { username: user.u_id, sub: user.u_name };
+    const payload = { userId: user.u_id, sub: user.u_name };
     return {
       access_token: this.jwtService.sign(payload, {
         secret: 'secretKey',

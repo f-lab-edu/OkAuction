@@ -80,6 +80,24 @@ export class UsersService {
     return userResponse;
   }
 
+  async fetchOne(id: number): Promise<UserResponseDto> {
+    const user = await this.usersRepository.findOneBy({ id: id });
+    if (!user) {
+      throw new UserNotFoundException(id);
+    }
+    const userResponse: UserResponseDto = {
+      id: user.id,
+      u_id: user.u_id,
+      u_name: user.u_name,
+      u_email: user.u_email,
+      u_phone: user.u_phone,
+      u_address: user.u_address,
+      u_addr_postcode: user.u_addr_postcode,
+      u_address_sub: user.u_address_sub,
+    };
+    return userResponse;
+  }
+
   async update({
     id,
     updateUserDto,

@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Put,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
@@ -15,6 +16,8 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -33,6 +36,12 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<UserResponseDto> {
     return this.usersService.findOne(id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('fetch')
+  fetchOne(@CurrentUser() user): Promise<UserResponseDto> {
+    return this.usersService.fetchOne(user.id);
   }
 
   @Put(':id')
