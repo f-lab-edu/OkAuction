@@ -7,6 +7,8 @@ import { UserNotFoundException } from './exceptions/user-not-found.exception';
 import { IncorrectPasswordException } from './exceptions/incorrect-password.exception';
 import { UserResponseDto } from 'src/users/dto/user-response.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { Response } from 'express';
+import Ipayload from './interface/Ipayload';
 
 @Injectable()
 export class AuthService {
@@ -38,14 +40,29 @@ export class AuthService {
     return userResponse;
   }
 
-  async login(user: UserResponseDto): Promise<LoginResponseDto> {
-    // JWT 토큰 생성
-    const payload = { userId: user.id, sub: user.u_name };
-    return {
-      access_token: this.jwtService.sign(payload, {
-        secret: 'secretKey',
-        expiresIn: '1h',
-      }),
-    };
+  async login(user: UserResponseDto, res: Response): Promise<LoginResponseDto> {
+    const payload: Ipayload = { userId: user.id, sub: user.u_name };
+    const refreshToken = this.setRefreshToken(payload);
+    res.setHeader('Set-Cookie', `refreshToken=${refreshToken}; path=/;`);
+
+    return { access_token: this.getAccessToken(payload) };
+  }
+
+  restoreAccessToken(payload: Ipayload): string {
+    return this.getAccessToken(payload);
+  }
+
+  setRefreshToken(payload: Ipayload): string {
+    return this.jwtService.sign(payload, {
+      secret: 'refreshSecretKey',
+      expiresIn: '2w',
+    });
+  }
+
+  getAccessToken(payload: Ipayload): string {
+    return this.jwtService.sign(payload, {
+      secret: 'secretKey',
+      expiresIn: '1h',
+    });
   }
 }

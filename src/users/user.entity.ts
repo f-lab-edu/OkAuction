@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  Index,
+} from 'typeorm';
 import { Product } from '../products/product.entity';
 import { Order } from 'src/orders/order.entity';
 
@@ -7,6 +13,7 @@ export class User {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
+  @Index({ unique: true })
   @Column({ length: 50 })
   u_id: string;
 

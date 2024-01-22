@@ -22,9 +22,13 @@ Accept: {{contentType}}
 
 ###
 # 페치유저
-GET {{host}}/auth/fetch
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInN1YiI6IuyCrOyaqeyekCDsnbTrpoQiLCJpYXQiOjE3MDUzMjYxNDcsImV4cCI6MTcwNTMyOTc0N30.SIBkCCqHgJ3a77k4OTqWfTPFVg6Zlq0c-vgevjrmvVs
+GET {{host}}/users/fetch
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcyMTMsInN1YiI6IuyCrOyaqeyekCDsnbTrpoQiLCJpYXQiOjE3MDU5NTc3MTcsImV4cCI6MTcwNTk2MTMxN30.RctN-SriL1P0v78iW8xhQWCCHbuD93R1Ne3a1fx4qUg
 
+###
+# 사용자 삭제
+DELETE {{host}}/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjcyMTMsInN1YiI6IuyCrOyaqeyekCDsnbTrpoQiLCJpYXQiOjE3MDU5NTc3MTcsImV4cCI6MTcwNTk2MTMxN30.RctN-SriL1P0v78iW8xhQWCCHbuD93R1Ne3a1fx4qUg
 
 ###
 # 사용자 정보 업데이트

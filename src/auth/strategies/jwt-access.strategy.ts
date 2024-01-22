@@ -1,6 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from '../auth.service';
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import Ipayload from '../interface/Ipayload';
 
 export default class JwtAccessStrategy extends PassportStrategy(
   Strategy,
@@ -13,12 +14,9 @@ export default class JwtAccessStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload) {
+  async validate(payload: Ipayload): Promise<Ipayload> {
     console.log(payload);
     //const payload = { userId: user.id, sub: user.u_name };
-    return {
-      id: payload.userId,
-      username: payload.sub,
-    };
+    return payload;
   }
 }
