@@ -70,8 +70,8 @@ export class Product {
   @Column()
   end_time: Date;
 
-  @Column({ nullable: true })
-  highest_bid: number;
+  @Column({ nullable: true, type: 'bigint' })
+  highest_bid: string;
 
   @Column({ length: 100, nullable: true })
   main_img_id: string;

@@ -10,7 +10,7 @@ export class ProductQueueService {
     productId: number,
     endTime: Date,
     userId: number,
-    highest_bid: number,
+    highest_bid: string,
   ) {
     // 경매 종료 시간을 기준으로 작업을 스케줄링
     await this.productQueue.add(

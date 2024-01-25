@@ -20,36 +20,48 @@ export class BidsService {
   ) {}
 
   async placeBid(createBidDto: CreateBidDto): Promise<Bid> {
-    const product = await this.productsRepository.findOneBy({
-      id: createBidDto.products_id,
-    });
+    return await this.productsRepository.manager.transaction(
+      async (manager) => {
+        // 비관적 락을 사용하여 상품 조회
+        const product = await manager
+          .createQueryBuilder(Product, 'product')
+          .setLock('pessimistic_write')
+          .where('product.id = :id', { id: createBidDto.products_id })
+          .getOne();
 
-    if (!product) {
-      throw new ProductNotFoundException(product.id);
-    }
+        if (!product) {
+          throw new ProductNotFoundException(createBidDto.products_id);
+        }
 
-    // 경매가 진행중인지 확인
-    const currentTime = new Date();
-    console.log(product.start_time instanceof Date);
-    if (currentTime < product.start_time || currentTime > product.end_time) {
-      throw new BidNotAllowedException();
-    }
+        // 기존 로직...
+        const currentTime = new Date();
+        if (
+          currentTime < product.start_time ||
+          currentTime > product.end_time
+        ) {
+          throw new BidNotAllowedException();
+        }
 
-    // 최소 입찰가보다 높은지 확인
-    const minBidAmount = product.highest_bid
-      ? product.highest_bid * 1.05
-      : product.p_b_price;
-    if (createBidDto.amount < minBidAmount) {
-      throw new InvalidBidException();
-    }
+        // 최소 입찰가 계산 로직...
+        const minBidAmount = product.highest_bid
+          ? (BigInt(product.highest_bid) * BigInt(101)) / BigInt(100)
+          : BigInt(product.p_b_price);
 
-    const newBid = this.bidsRepository.create(createBidDto);
-    await this.bidsRepository.save(newBid);
+        if (BigInt(createBidDto.amount) < minBidAmount) {
+          throw new InvalidBidException();
+        }
 
-    product.highest_bid = createBidDto.amount;
-    await this.productsRepository.save(product);
+        // 입찰 생성 및 저장
+        const newBid = this.bidsRepository.create(createBidDto);
+        await manager.save(newBid);
 
-    return newBid;
+        // 상품의 최고 입찰가 갱신
+        product.highest_bid = createBidDto.amount;
+        await manager.save(product);
+
+        return newBid;
+      },
+    );
   }
 
   async findAll(): Promise<Bid[]> {

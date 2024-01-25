@@ -64,9 +64,9 @@ export class UpdateProductDto {
   @Type(() => Date)
   end_time?: Date;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  highest_bid?: number;
+  highest_bid?: string;
 
   @IsString()
   @IsOptional()

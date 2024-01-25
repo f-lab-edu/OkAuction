@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsDate } from 'class-validator';
+import { IsNumber, IsOptional, IsDate, IsString } from 'class-validator';
 
 export class CreateBidDto {
   @IsNumber()
@@ -7,8 +7,8 @@ export class CreateBidDto {
   @IsNumber()
   products_id: number;
 
-  @IsNumber()
-  amount: number;
+  @IsString()
+  amount: string;
 
   @IsDate()
   @IsOptional()
