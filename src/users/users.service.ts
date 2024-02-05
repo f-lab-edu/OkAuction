@@ -196,6 +196,6 @@ export class UsersService {
   }
 
   async findOneByUId(u_id: string): Promise<User> {
-    return this.usersRepository.findOneBy({ u_id });
+    return await this.usersRepository.findOneBy({ u_id });
   }
 }
