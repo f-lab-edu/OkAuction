@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateBidDto } from './dto/create-bid.dto';
 import { Bid } from './bid.entity';
 import { Product } from 'src/products/product.entity';
@@ -17,51 +17,68 @@ export class BidsService {
     private readonly bidsRepository: Repository<Bid>,
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async placeBid(createBidDto: CreateBidDto): Promise<Bid> {
-    return await this.productsRepository.manager.transaction(
-      async (manager) => {
-        // 비관적 락을 사용하여 상품 조회
-        const product = await manager
-          .createQueryBuilder(Product, 'product')
-          .setLock('pessimistic_write')
-          .where('product.id = :id', { id: createBidDto.products_id })
-          .getOne();
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction('READ COMMITTED');
 
-        if (!product) {
-          throw new ProductNotFoundException(createBidDto.products_id);
-        }
+    try {
+      const product = await queryRunner.manager.findOneBy(Product, {
+        id: createBidDto.products_id,
+      });
 
-        // 기존 로직...
-        const currentTime = new Date();
-        if (
-          currentTime < product.start_time ||
-          currentTime > product.end_time
-        ) {
-          throw new BidNotAllowedException();
-        }
+      if (!product) {
+        throw new ProductNotFoundException(createBidDto.products_id);
+      }
 
-        // 최소 입찰가 계산 로직...
-        const minBidAmount = product.highest_bid
-          ? (BigInt(product.highest_bid) * BigInt(101)) / BigInt(100)
-          : BigInt(product.p_b_price);
+      const currentTime = new Date();
+      if (currentTime < product.start_time || currentTime > product.end_time) {
+        throw new BidNotAllowedException();
+      }
 
-        if (BigInt(createBidDto.amount) < minBidAmount) {
-          throw new InvalidBidException();
-        }
+      const minBidAmount = product.highest_bid
+        ? (BigInt(product.highest_bid) * BigInt(101)) / BigInt(100)
+        : BigInt(product.p_b_price);
 
-        // 입찰 생성 및 저장
-        const newBid = this.bidsRepository.create(createBidDto);
-        await manager.save(newBid);
+      if (BigInt(createBidDto.amount) < minBidAmount) {
+        throw new InvalidBidException();
+      }
 
-        // 상품의 최고 입찰가 갱신
-        product.highest_bid = createBidDto.amount;
-        await manager.save(product);
+      // 조건부 업데이트 실행
+      const result = await queryRunner.manager
+        .createQueryBuilder()
+        .update(Product)
+        .set({ highest_bid: createBidDto.amount })
+        .where(
+          'id = :id AND (highest_bid IS NULL OR highest_bid < :newBidAmount)',
+          {
+            id: product.id,
+            newBidAmount: createBidDto.amount,
+          },
+        )
+        .execute();
 
-        return newBid;
-      },
-    );
+      // 업데이트된 행이 없으면 예외 발생
+      if (result.affected === 0) {
+        throw new InvalidBidException();
+      }
+
+      // 입찰 생성 및 저장
+      const newBid = queryRunner.manager.create(Bid, { ...createBidDto });
+      await queryRunner.manager.save(newBid);
+
+      await queryRunner.commitTransaction();
+
+      return newBid;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error; // 또는 사용자 정의 예외 처리
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async findAll(): Promise<Bid[]> {

@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  VersionColumn,
+} from 'typeorm';
 import { Product } from '../products/product.entity';
 import { Order } from 'src/orders/order.entity';
 
@@ -68,6 +74,9 @@ export class User {
     default: 'N',
   })
   u_signout: string;
+
+  @VersionColumn()
+  version: number;
 
   @OneToMany(() => Product, (product) => product.user)
   products: Product[];
