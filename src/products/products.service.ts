@@ -202,6 +202,36 @@ export class ProductsService {
       },
     });
   }
+
+  async searchByLike(
+    name: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Product[]> {
+    const skip = (page - 1) * limit;
+
+    return this.productsRepository
+      .createQueryBuilder('product')
+      .where('product.p_name LIKE :name', { name: `%${name}%` })
+      .take(limit)
+      .skip(skip)
+      .getMany();
+  }
+
+  async searchByNgram(
+    name: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Product[]> {
+    const skip = (page - 1) * limit;
+
+    return this.productsRepository
+      .createQueryBuilder('product')
+      .where('MATCH(product.p_name) AGAINST (:name IN BOOLEAN MODE)', { name })
+      .take(limit)
+      .skip(skip)
+      .getMany();
+  }
 }
 
 interface IProductsServiceUpdate {

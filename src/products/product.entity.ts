@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToOne,
+  Index,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Order } from 'src/orders/order.entity';
@@ -24,6 +25,7 @@ export class Product {
   @Column()
   user_id: number;
 
+  @Index('product_name_index', { unique: true })
   @Column({ length: 50, nullable: true })
   p_name: string;
 

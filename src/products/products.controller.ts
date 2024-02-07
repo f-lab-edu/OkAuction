@@ -53,6 +53,24 @@ export class ProductsController {
     return this.productsService.findAuctionAvailable(page, limit);
   }
 
+  @Get('/search/like')
+  searchByLike(
+    @Query('name') name: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ): Promise<Product[]> {
+    return this.productsService.searchByLike(name, page, limit);
+  }
+
+  @Get('/search/ngram')
+  searchByNgram(
+    @Query('name') name: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ): Promise<Product[]> {
+    return this.productsService.searchByNgram(name, page, limit);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Product> {
     return this.productsService.findOne(id);
