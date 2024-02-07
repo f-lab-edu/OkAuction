@@ -50,3 +50,7 @@ Content-Type: {{contentType}}
 ###
 # 제품 삭제
 DELETE {{host}}/products/1
+
+###
+# 제품 카테고리 목록 조회
+GET {{host}}/products/category/1

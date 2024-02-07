@@ -150,6 +150,31 @@ export class ProductsService {
   ): Promise<void> {
     await this.productsRepository.save({ id, p_sales_status: status });
   }
+
+  async findByCategory(
+    c_id: number,
+    c_id2?: number,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Product[]> {
+    const skip = (page - 1) * limit; // 건너뛸 아이템의 수를 계산
+
+    if (c_id2) {
+      // c_id2가 주어진 경우, 해당 서브 카테고리에 속하는 제품들을 조회
+      return this.productsRepository.find({
+        where: { c_id2 },
+        take: limit,
+        skip: skip,
+      });
+    } else {
+      // c_id2가 주어지지 않은 경우, 주 카테고리(c_id)에 속하는 제품들을 조회
+      return this.productsRepository.find({
+        where: { c_id },
+        take: limit,
+        skip: skip,
+      });
+    }
+  }
 }
 
 interface IProductsServiceUpdate {
