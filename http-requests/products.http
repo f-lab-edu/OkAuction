@@ -66,3 +66,7 @@ GET {{host}}/products/search/like?name=3_7
 ###
 # FT 검색을 사용한 제품 검색
 GET {{host}}/products/search/ngram?name=3_7
+
+###
+# 조회수 높은 순서로 10개씩 제품 목록 조회
+GET {{host}}/products/hit

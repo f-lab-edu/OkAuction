@@ -232,6 +232,20 @@ export class ProductsService {
       .skip(skip)
       .getMany();
   }
+  async findByHit(page: number = 1, limit: number = 10): Promise<Product[]> {
+    const skip = (page - 1) * limit;
+
+    return this.productsRepository.find({
+      where: {
+        // 필요한 경우 여기에 추가적인 조건을 명시할 수 있습니다.
+      },
+      take: limit,
+      skip: skip,
+      order: {
+        p_hit: 'DESC', // 조회수가 높은 순으로 정렬
+      },
+    });
+  }
 }
 
 interface IProductsServiceUpdate {

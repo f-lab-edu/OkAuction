@@ -44,6 +44,15 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('/hit')
+  findByPopularity(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ): Promise<Product[]> {
+    limit = limit > 100 ? 100 : limit; // 최대 limit를 100으로 설정하여 너무 많은 데이터 요청을 방지
+    return this.productsService.findByHit(page, limit);
+  }
+
   @Get('/available')
   findAuctionAvailable(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
