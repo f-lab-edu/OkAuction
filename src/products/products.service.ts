@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import {
+  IsNull,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Not,
+  Repository,
+} from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './product.entity';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -68,7 +74,7 @@ export class ProductsService {
     //end_time은 start_time에서 p_dur_date(경매 진행일)을 더한 값
     const { start_time, p_dur_date } = createProductDto;
     const end_time = new Date(start_time);
-    end_time.setSeconds(end_time.getSeconds() + p_dur_date);
+    end_time.setMinutes(end_time.getMinutes() + p_dur_date);
     createProductDto.end_time = end_time;
 
     const product = this.productsRepository.create(createProductDto);
@@ -174,6 +180,27 @@ export class ProductsService {
         skip: skip,
       });
     }
+  }
+
+  async findAuctionAvailable(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Product[]> {
+    const currentTime = new Date();
+    const skip = (page - 1) * limit;
+
+    return this.productsRepository.find({
+      where: {
+        p_sales_status: 'Available',
+        start_time: LessThanOrEqual(currentTime),
+        end_time: MoreThanOrEqual(currentTime),
+      },
+      take: limit,
+      skip: skip,
+      order: {
+        end_time: 'ASC', // 경매 종료시간이 빠른 순으로 정렬
+      },
+    });
   }
 }
 

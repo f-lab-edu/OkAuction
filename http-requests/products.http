@@ -54,3 +54,7 @@ DELETE {{host}}/products/1
 ###
 # 제품 카테고리 목록 조회
 GET {{host}}/products/category/1
+
+###
+# 경매 중인 제품 목록 조회
+GET {{host}}/products/available
