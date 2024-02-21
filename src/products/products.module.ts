@@ -11,6 +11,10 @@ import { UsersModule } from 'src/users/users.module';
 import { ProductQueueService } from './product-queue.service';
 import { ProductProcessor } from './product.processor';
 import { BullModule } from '@nestjs/bull';
+import {
+  ElasticsearchModule,
+  // ElasticsearchService,
+} from '@nestjs/elasticsearch';
 
 @Module({
   imports: [
@@ -20,8 +24,18 @@ import { BullModule } from '@nestjs/bull';
     BullModule.registerQueue({
       name: 'productQueue',
     }),
+    ElasticsearchModule.registerAsync({
+      useFactory: () => ({
+        node: 'http://localhost:9200',
+      }),
+    }),
   ],
-  providers: [ProductsService, ProductQueueService, ProductProcessor],
+  providers: [
+    ProductsService,
+    ProductQueueService,
+    ProductProcessor,
+    // ElasticsearchService,
+  ],
   controllers: [ProductsController],
 })
 export class ProductsModule {}

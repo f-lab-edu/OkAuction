@@ -11,6 +11,7 @@ import { BidsModule } from './bids/bids.module';
 import { Order } from './orders/order.entity';
 import { OrdersModule } from './orders/orders.module';
 import { BullModule } from '@nestjs/bull';
+import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 @Module({
   imports: [
@@ -30,6 +31,9 @@ import { BullModule } from '@nestjs/bull';
         host: 'localhost',
         port: 6379,
       },
+    }),
+    ElasticsearchModule.register({
+      node: 'http://localhost:9200',
     }),
     UsersModule,
     ProductsModule,

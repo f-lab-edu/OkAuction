@@ -21,6 +21,7 @@ import { UserNotFoundException } from 'src/users/exceptions/user-not-found.excep
 import { Bid } from 'src/bids/bid.entity';
 import { ProductDeletionException } from './exceptions/product-deletion.exception';
 import { InvalidProductTimeException } from './exceptions/invalid-product-time.exception';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Injectable()
 export class ProductsService {
@@ -33,6 +34,7 @@ export class ProductsService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Bid)
     private readonly bidRepository: Repository<Bid>,
+    private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
@@ -74,7 +76,7 @@ export class ProductsService {
     //end_time은 start_time에서 p_dur_date(경매 진행일)을 더한 값
     const { start_time, p_dur_date } = createProductDto;
     const end_time = new Date(start_time);
-    end_time.setMinutes(end_time.getMinutes() + p_dur_date);
+    end_time.setDate(end_time.getDate() + p_dur_date);
     createProductDto.end_time = end_time;
 
     const product = this.productsRepository.create(createProductDto);
@@ -232,6 +234,22 @@ export class ProductsService {
       .skip(skip)
       .getMany();
   }
+
+  async searchByES(name: string, page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit; // 계산된 오프셋
+
+    return this.elasticsearchService.search({
+      index: 'my_index', // 사용할 인덱스
+      body: {
+        query: {
+          match: { p_name: name }, // 검색할 필드와 값
+        },
+        from: skip, // 시작 문서의 오프셋
+        size: limit, // 한 페이지에 반환할 문서 수
+      },
+    });
+  }
+
   async findByHit(page: number = 1, limit: number = 10): Promise<Product[]> {
     const skip = (page - 1) * limit;
 

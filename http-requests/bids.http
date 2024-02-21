@@ -21,8 +21,8 @@ Accept: {{contentType}}
 
 {
   "user_id": 1,
-  "products_id": 1,
-  "amount": 20000
+  "products_id": 2,
+  "amount": "3000000"
 }
 
 ###

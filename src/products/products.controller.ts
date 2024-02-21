@@ -27,15 +27,15 @@ export class ProductsController {
   @Post()
   async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     const product = await this.productsService.create(createProductDto);
-    const startTime = new Date(product.start_time);
-    const endTime = new Date(product.end_time);
-    await this.productQueueService.addAuctionStartJob(product.id, startTime);
-    await this.productQueueService.addAuctionEndJob(
-      product.id,
-      endTime,
-      product.user_id,
-      product.highest_bid,
-    );
+    // const startTime = new Date(product.start_time);
+    // const endTime = new Date(product.end_time);
+    // await this.productQueueService.addAuctionStartJob(product.id, startTime);
+    // await this.productQueueService.addAuctionEndJob(
+    //   product.id,
+    //   endTime,
+    //   product.user_id,
+    //   product.highest_bid,
+    // );
     return product;
   }
 
@@ -78,6 +78,15 @@ export class ProductsController {
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
   ): Promise<Product[]> {
     return this.productsService.searchByNgram(name, page, limit);
+  }
+
+  @Get('/search/es')
+  searchByES(
+    @Query('name') name: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ) {
+    return this.productsService.searchByES(name, page, limit);
   }
 
   @Get(':id')
